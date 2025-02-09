@@ -7,11 +7,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { BackgroundShapes } from "./BackgroundShapes"
 
 const partners = [
-  { name: "شركة آسيا سيل", logo: "/placeholder.svg?height=100&width=200" },
-  { name: "منظمة الحياة للإغاثة والتنمية", logo: "/placeholder.svg?height=100&width=200" },
-  { name: "محافظة نينوى", logo: "/placeholder.svg?height=100&width=200" },
-  { name: "المؤسسة العراقية للتنمية", logo: "/placeholder.svg?height=100&width=200" },
-  { name: "شركة WHH الألمانية", logo: "/placeholder.svg?height=100&width=200" },
+  { name: "شركة العقيق الازرق", logo: "/logo/a1.jpg" },
+  { name: "شركة الابراج الشامخة", logo: "/logo/a3.jpg" },
+  { name: "منظمة ايادي الخير", logo: "/logo/a4.jpg" },
+  { name: "المؤسسة العراقية للتنمية", logo: "/logo/a5.jpg" },
+  { name: "شركة واحات الحدباء", logo: "/logo/a6.jpg" },
+  { name: "شركة اولي ميدكل", logo: "/logo/a7.jpg" },
 ]
 
 export default function PartnersSection() {
