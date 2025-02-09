@@ -75,11 +75,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center">
                 <Mail className="w-5 h-5 ml-2 flex-shrink-0" />
-                <span className="break-all">khasbaa.16@gmail.com</span>
+                <span className="break-all">info@khasbaa-alkhair.com</span>
               </li>
               <li className="flex items-center">
                 <Phone className="w-5 h-5 ml-2 flex-shrink-0" />
-                <span dir="ltr">000964-7701618157</span>
+                <span dir="ltr">+9647701618157</span>
               </li>
             </ul>
           </div>

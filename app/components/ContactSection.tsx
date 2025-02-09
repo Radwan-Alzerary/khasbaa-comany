@@ -26,11 +26,11 @@ export default function ContactSection() {
               <ul className="space-y-4">
                 <li className="flex items-center">
                   <Phone className="w-5 h-5 text-blue-500 mr-2" />
-                  <span>000964-7701618157</span>
+                  <span>+9647701618157</span>
                 </li>
                 <li className="flex items-center">
                   <Mail className="w-5 h-5 text-blue-500 mr-2" />
-                  <span>khasbaa.16@gmail.com</span>
+                  <span>info@khasbaa-alkhair.com                  </span>
                 </li>
                 <li className="flex items-center">
                   <MapPin className="w-5 h-5 text-blue-500 mr-2" />
