@@ -23,7 +23,7 @@ export default function Home() {
       <FeaturedProjectsSection />
       <GallerySection />
       <WhyChooseUsSection />
-      <EventsSection />
+      {/* <EventsSection /> */}
       <PartnersSection />
       <ContactSection />
       <MapSection />
