@@ -2,14 +2,53 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Menu, X } from "lucide-react"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  const controlHeader = useCallback(() => {
+    const currentScrollY = window.scrollY
+    if (currentScrollY < lastScrollY) {
+      setIsVisible(true)
+    } else if (currentScrollY > 100 && currentScrollY > lastScrollY) {
+      setIsVisible(false)
+    }
+    setLastScrollY(currentScrollY)
+  }, [lastScrollY])
+
+  useEffect(() => {
+    let throttleTimer: NodeJS.Timeout
+
+    const throttle = (callback: () => void, time: number) => {
+      if (throttleTimer) return
+
+      throttleTimer = setTimeout(() => {
+        callback()
+        throttleTimer = null
+      }, time)
+    }
+
+    const onScroll = () => {
+      throttle(controlHeader, 200)
+    }
+
+    window.addEventListener("scroll", onScroll)
+
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+    }
+  }, [controlHeader])
 
   return (
-    <header className="fixed w-full z-10 bg-white bg-opacity-70 backdrop-blur-md shadow-md">
+    <header
+      className={`fixed w-full z-50 bg-white bg-opacity-70 backdrop-blur-md shadow-md transition-all duration-300 ${
+        isVisible ? "top-0" : "-top-full"
+      }`}
+    >
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="text-2xl font-bold text-primary">

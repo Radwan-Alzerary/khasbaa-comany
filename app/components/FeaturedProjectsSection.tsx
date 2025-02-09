@@ -4,7 +4,8 @@ import { useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, X, Info } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 const projects = [
   {
@@ -79,13 +80,16 @@ export default function FeaturedProjectsSection() {
   const [currentProject, setCurrentProject] = useState(0)
   const [currentImage, setCurrentImage] = useState(0)
   const [showModal, setShowModal] = useState(false)
+  const [direction, setDirection] = useState(0)
 
   const nextProject = () => {
+    setDirection(1)
     setCurrentProject((prev) => (prev + 1) % projects.length)
     setCurrentImage(0)
   }
 
   const prevProject = () => {
+    setDirection(-1)
     setCurrentProject((prev) => (prev - 1 + projects.length) % projects.length)
     setCurrentImage(0)
   }
@@ -100,18 +104,55 @@ export default function FeaturedProjectsSection() {
     )
   }
 
+  const variants = {
+    enter: (direction: number) => {
+      return {
+        x: direction > 0 ? 1000 : -1000,
+        opacity: 0,
+      }
+    },
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => {
+      return {
+        zIndex: 0,
+        x: direction < 0 ? 1000 : -1000,
+        opacity: 0,
+      }
+    },
+  }
+
   return (
     <section className="py-16 bg-gray-100">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold mb-8 text-center">مشاريعنا المميزة</h2>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="relative h-96">
-            <Image
-              src={projects[currentProject].images[currentImage].src || "/placeholder.svg"}
-              alt={projects[currentProject].title}
-              layout="fill"
-              objectFit="cover"
-            />
+            <AnimatePresence initial={false} custom={direction}>
+              <motion.div
+                key={currentProject}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={projects[currentProject].images[currentImage].src || "/placeholder.svg"}
+                  alt={projects[currentProject].title}
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </motion.div>
+            </AnimatePresence>
             <button
               onClick={prevImage}
               className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full"
@@ -127,71 +168,119 @@ export default function FeaturedProjectsSection() {
               <ChevronRight size={24} />
             </button>
           </div>
-          <div className="p-6">
-            <h3 className="text-2xl font-semibold mb-2">{projects[currentProject].title}</h3>
-            <p className="text-gray-600 mb-4">{projects[currentProject].description}</p>
-            <p className="text-sm text-gray-500 mb-4">{projects[currentProject].images[currentImage].description}</p>
-            <div className="flex justify-between items-center">
-              <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                {projects[currentProject].category}
-              </span>
-              <div>
-                <button onClick={prevProject} className="mr-2 text-blue-500 hover:text-blue-700">
-                  المشروع السابق
-                </button>
-                <button onClick={nextProject} className="text-blue-500 hover:text-blue-700">
-                  المشروع التالي
-                </button>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentProject}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="p-6"
+            >
+              <h3 className="text-2xl font-semibold mb-2">{projects[currentProject].title}</h3>
+              <p className="text-gray-600 mb-4">{projects[currentProject].description}</p>
+              <p className="text-sm text-gray-500 mb-4">{projects[currentProject].images[currentImage].description}</p>
+              <div className="flex justify-end items-center">
+                <motion.button
+                  onClick={prevProject}
+                  className="mr-2 text-blue-500 hover:text-blue-700 p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  aria-label="المشروع السابق"
+                >
+                  <ChevronRight size={24} />
+                </motion.button>
+                <motion.button
+                  onClick={nextProject}
+                  className="text-blue-500 hover:text-blue-700 p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  aria-label="المشروع التالي"
+                >
+                  <ChevronLeft size={24} />
+                </motion.button>
               </div>
-            </div>
-            <Button onClick={() => setShowModal(true)} className="mt-4 w-full">
-              عرض تفاصيل المشروع
-            </Button>
-          </div>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button onClick={() => setShowModal(true)} className="mt-4 w-full flex items-center justify-center">
+                  <Info className="mr-2" size={20} />
+                  عرض تفاصيل المشروع
+                </Button>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
         </div>
         <div className="mt-8 flex justify-center space-x-2">
           {projects[currentProject].images.map((_, index) => (
-            <button
+            <motion.button
               key={index}
               onClick={() => setCurrentImage(index)}
               className={`w-3 h-3 rounded-full ${index === currentImage ? "bg-blue-500" : "bg-gray-300"}`}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.8 }}
               aria-label={`Go to image ${index + 1}`}
             />
           ))}
         </div>
-        <div className="text-center mt-8">
+        <motion.div
+          className="text-center mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
           <Button asChild>
             <Link href="/projects">عرض جميع المشاريع</Link>
           </Button>
-        </div>
+        </motion.div>
       </div>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-2xl font-semibold">{projects[currentProject].title}</h3>
-              <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700">
-                <X size={24} />
-              </button>
-            </div>
-            <p className="text-gray-700 mb-4">{projects[currentProject].fullDescription}</p>
-            <div className="grid grid-cols-2 gap-4">
-              {projects[currentProject].images.map((image, index) => (
-                <div key={index} className="relative h-48">
-                  <Image
-                    src={image.src || "/placeholder.svg"}
-                    alt={image.description}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-2xl font-semibold">{projects[currentProject].title}</h3>
+                <motion.button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <X size={24} />
+                </motion.button>
+              </div>
+              <p className="text-gray-700 mb-4">{projects[currentProject].fullDescription}</p>
+              <div className="grid grid-cols-2 gap-4">
+                {projects[currentProject].images.map((image, index) => (
+                  <motion.div
+                    key={index}
+                    className="relative h-48"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Image
+                      src={image.src || "/placeholder.svg"}
+                      alt={image.description}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
